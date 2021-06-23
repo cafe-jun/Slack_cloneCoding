@@ -1,6 +1,9 @@
 import path from 'path';
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import webpack from 'webpack';
+// TS 에서만 사용
+// TS 검사를 할때 블로킹 방식 (다음 동작을 막는것)
+// TS Checking 이랑 Webpack 실행이랑 동식 돌아감
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 // import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
@@ -43,11 +46,12 @@ const config: webpack.Configuration = {
           ],
           env: {
             development: {
-              plugins: [['@emotion', { sourceMap: true }], require.resolve('react-refresh/babel')],
+              //plugins: [['@emotion', { sourceMap: true }], require.resolve('react-refresh/babel')],
+              plugins: [require.resolve('react-refresh/babel')],
             },
-            production: {
-              plugins: ['@emotion'],
-            },
+            // production: {
+            //   plugins: ['@emotion'],
+            // },
           },
         },
         exclude: path.join(__dirname, 'node_modules'),
