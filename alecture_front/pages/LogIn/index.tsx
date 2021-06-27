@@ -34,14 +34,20 @@ const LogIn = () => {
     [email, password],
   );
 
-  // if (data === undefined) {
-  //   return <div>로딩중...</div>;
-  // }
+  if (data === undefined) {
+    return <div>로딩중...</div>;
+  }
 
+  /* 
+    로그인이 성공하면 redirect 
+    로그인이 안되었다면 data 는 false 
+  */
   // if (data) {
-  //   return <Redirect to="/workspace/sleact/channel/일반" />;
+  //   return <Redirect to="/workspace/sleact/channel/" />;
   // }
-
+  if (data) {
+    return <Redirect to="/workspace/channel/" />;
+  }
   // console.log(error, userData);
   // if (!error && userData) {
   //   console.log('로그인됨', userData);

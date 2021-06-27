@@ -2,11 +2,14 @@ import useInput from '@hooks/useInput';
 import React, { useCallback, useState } from 'react';
 import axios from 'axios';
 import { Form, Success, Error, Label, Input, LinkContainer, Button, Header } from './styles';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import useSWR from 'swr';
+import fetcher from '@utils/fetcher';
 
 const SignUp = () => {
   const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
+  const { data, error, revalidate, mutate } = useSWR('/api/users', fetcher);
   //const [email, setEmail] = useState('');
   //const [nickname, setNickname] = useState('');
   const [password, , setPassword] = useInput(''); // 변환을
@@ -22,7 +25,8 @@ const SignUp = () => {
   // }, []);
   // const onChangeEmail = useCallback((e) => {
   //   setEmail(e.target.value);
-  // }, []);
+  // }, []);\
+
   const onChangePassword = useCallback(
     (e) => {
       setPassword(e.target.value);
@@ -70,6 +74,13 @@ const SignUp = () => {
     },
     [email, nickname, password, passwordCheck, mismatchError],
   );
+
+  /**
+   * ( 중요 ) hook 는 return 보다 아래에 있어야한다
+   */
+  if (data) {
+    return <Redirect to="/workspace/channel" />;
+  }
 
   return (
     <div id="container">
