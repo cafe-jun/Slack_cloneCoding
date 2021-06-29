@@ -1,7 +1,9 @@
 import useInput from '@hooks/useInput';
 import React, { useCallback, useState } from 'react';
-import axios from 'axios';
 import { Form, Error, Label, Input, LinkContainer, Button, Header } from './styles';
+
+// 회워가입에서 사용하는 비동기
+// 리덕스 단점 : 코드가 길어짐
 
 const SignUp = () => {
   const [email, onChangeEmail] = useInput('');
@@ -39,7 +41,7 @@ const SignUp = () => {
       console.log(email, nickname, password, passwordCheck);
       if (mismatchError && nickname) {
         console.log('서버로 회원가입을 하기');
-        axios.post('');
+        // 비동기 요청이 있을때 사가나 tunk 같은 것들이 처리
       }
     },
     [email, nickname, password, passwordCheck, mismatchError],
