@@ -7,8 +7,15 @@ import { Link, Redirect } from 'react-router-dom';
 import useSWR from 'swr';
 
 const LogIn = () => {
-  const { data, error, revalidate, mutate } = useSWR('/api/users', fetcher);
-
+  // SWR은 컴포넌트을 호출할때 한번은 반드시 호출한다
+  const { data, error, revalidate, mutate } = useSWR('/api/users', fetcher, {
+    dedupingInterval: 2000, // 2초 동안 서버에는 한번만 호출하고 캐시 된거를 사용한다
+  });
+  //   아래와 같이 사용될수 있음
+  //   const { data } = useSWR('hello', (key) => {
+  //   localStorage.setItem('data', key);
+  //   return localStorage.getItem('hello');
+  // });
   const [logInError, setLogInError] = useState(false);
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
@@ -25,7 +32,14 @@ const LogIn = () => {
           },
         )
         .then((response) => {
-          revalidate();
+          // revalidate 는 서버로 요청을 보내서 데이터를 다시 가져오는것
+          // mutate : 서버에 데이터를 안보내고 수정하는것
+          // 두번째 자리에 (shouldRevalidate를 false 로 설정해야함)
+          // optimistic ui 서버에 가기도 전에 액션 ui 가 실행된다
+          // 먼저 성공을 한다고 생각을 한뒤 이벤트 실행 (passive ui)
+
+          mutate(response.data, false);
+          // revalidate();
         })
         .catch((error) => {
           setLogInError(error.response?.data?.statusCode === 401);
