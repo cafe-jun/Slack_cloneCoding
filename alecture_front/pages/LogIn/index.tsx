@@ -38,8 +38,8 @@ const LogIn = () => {
           // optimistic ui 서버에 가기도 전에 액션 ui 가 실행된다
           // 먼저 성공을 한다고 생각을 한뒤 이벤트 실행 (passive ui)
 
-          mutate(response.data, false);
-          // revalidate();
+          //mutate(response.data, false);
+          revalidate();
         })
         .catch((error) => {
           setLogInError(error.response?.data?.statusCode === 401);
@@ -60,7 +60,7 @@ const LogIn = () => {
   //   return <Redirect to="/workspace/sleact/channel/" />;
   // }
   if (data) {
-    return <Redirect to="/workspace/channel/" />;
+    return <Redirect to="/workspace/sleact/channel/일반" />;
   }
   // console.log(error, userData);
   // if (!error && userData) {
