@@ -1,14 +1,66 @@
-import React from 'react';
-import Workspace from '@layouts/Workspace';
+import React, { useCallback } from 'react';
+import gravatar from 'gravatar';
+import { Container, Header } from '@pages/DirectMessage/styles';
+import useSWR, { useSWRInfinite } from 'swr';
+import fetcher from '@utils/fetcher';
+import { useParams } from 'react-router';
+import ChatBox from '@components/ChatBox';
+import useInput from '@hooks/useInput';
+import { IDM } from '@typings/db';
+import axios from 'axios';
+import ChatList from '@components/ChatList';
 
 const DirectMessage = () => {
+  const { workspace, id } = useParams<{ workspace: string; id: string }>();
+  const { data: userData } = useSWR(`/api/workspaces/${workspace}/users/${id}`, fetcher);
+  const { data: myData } = useSWR(`/api/users`, fetcher);
+  const [chat, onChangeChat, setChat] = useInput('');
+  const {
+    data: chatData,
+    mutate: mutateChat,
+    revalidate,
+    setSize,
+  } = useSWRInfinite<IDM[]>(
+    (index) => `/api/workspaces/${workspace}/dms/${id}/chat?perPage=20&page=${index + 1}`,
+    fetcher,
+  );
+
+  const onSubmitForm = useCallback(
+    (e) => {
+      e.preventDefault();
+      console.log(chat);
+      if (chat?.trim() && chatData) {
+        axios
+          .post(`/api/workspaces/${workspace}/dms/${id}/chats`, {
+            content: chat,
+          })
+          .then(() => {
+            revalidate();
+            setChat('');
+          })
+          .catch(console.error);
+        // const saveChat = chat;
+        // mutateChat((prevChatData) => {
+        //   prevChatData?.[0].unshift();
+        // });
+      }
+    },
+    [chat],
+  );
+
+  if (!userData || !myData) {
+    return null;
+  }
+
   return (
-    // Workspace 태그 안 div 태그는 chilren 이 들어있게 된다
-    // <Workspace>
-    <>
-      <div>DM</div>
-      {/* </Workspace> */}
-    </>
+    <Container>
+      <Header>
+        <img src={gravatar.url(userData.email, { s: '24px', d: 'retro' })} alt={userData.nickname} />
+        <span>{userData.nickname}</span>
+      </Header>
+      <ChatList />
+      <ChatBox chat={chat} onChangeChat={onChangeChat} onSubmitForm={onSubmitForm} />
+    </Container>
   );
 };
 

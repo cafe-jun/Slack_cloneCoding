@@ -45,8 +45,9 @@ const CreateChannelModal: VFC<Props> = ({ show, onCloseModal, setShowCreateChann
             withCredentials: true,
           },
         )
-        .then(() => {
+        .then((response) => {
           setShowCreateChannelModal(false);
+          revalidateChannel();
           setNewChannel('');
         })
         .catch((error) => {
