@@ -1,3 +1,18 @@
 {
-  "extends": ["plugin:prettier/recommended"]
+  //"extends": ["plugin:prettier/recommended", "react-app"],
+
+  "extends": ["plugin:prettier/recommended"],
+  "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ]
+  }
+  // "plugins": ["react-hooks"]
+  // "rules": {
+  //   "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
+  //   "react-hooks/exhaustive-deps": "warn" // Checks effect dependencies
+  // }
 }

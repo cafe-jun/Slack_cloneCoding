@@ -80,12 +80,13 @@ const config: webpack.Configuration = {
     historyApiFallback: true, // react router
     port: 3090,
     publicPath: '/dist/',
-    // proxy: {
-    //   '/api/': {
-    //     target: 'http://localhost:3095',
-    //     changeOrigin: true,
-    //   },
-    // },
+    proxy: {  // api 요청으로 하는 요청이 있으면 http://localhost:3095로 보내라 
+      // core 에러 해결 : localhost 만 가능 => 3095 -> 3095 로 요청이감 
+      '/api/': {
+        target: 'http://localhost:3095',
+        changeOrigin: true,
+      },
+    },
   },
 };
 
