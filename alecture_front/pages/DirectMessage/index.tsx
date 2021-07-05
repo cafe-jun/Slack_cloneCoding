@@ -1,17 +1,17 @@
 import React, { useCallback, useRef, useEffect } from 'react';
-import gravatar from 'gravatar';
-import { Container, Header } from '@pages/DirectMessage/styles';
-import useSWR, { useSWRInfinite } from 'swr';
-import fetcher from '@utils/fetcher';
-import useSocket from '@hooks/useSocket';
 import { useParams } from 'react-router';
-import ChatBox from '@components/ChatBox';
-import useInput from '@hooks/useInput';
-import { IDM } from '@typings/db';
-import { Scrollbars } from 'react-custom-scrollbars-2';
+import gravatar from 'gravatar';
+import useSWR, { useSWRInfinite } from 'swr';
 import axios from 'axios';
+import { Scrollbars } from 'react-custom-scrollbars-2';
+import useSocket from '@hooks/useSocket';
+import useInput from '@hooks/useInput';
+import ChatBox from '@components/ChatBox';
 import ChatList from '@components/ChatList';
+import fetcher from '@utils/fetcher';
 import makeSection from '@utils/makeSection';
+import { IDM } from '@typings/db';
+import { Container, Header } from '@pages/DirectMessage/styles';
 
 const DirectMessage = () => {
   const { workspace, id } = useParams<{ workspace: string; id: string }>();
