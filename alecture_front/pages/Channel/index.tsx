@@ -11,6 +11,8 @@ import { IChannel, IChat, IUser, IDM } from '@typings/db';
 import axios from 'axios';
 import ChatList from '@components/ChatList';
 import makeSection from '@utils/makeSection';
+import { DragOver } from './styles';
+import InviteChannelModal from '@components/InviteChannelModal';
 
 const Channel = () => {
   const [chat, onChangeChat, setChat] = useInput('');
@@ -99,6 +101,9 @@ const Channel = () => {
   const onClickInviteChannel = useCallback(() => {
     setShowInviteChannelModal(true);
   }, []);
+  const onCloseModal = useCallback(() => {
+    setShowInviteChannelModal(false);
+  }, []);
 
   useEffect(() => {
     socket?.on('message', onMessage);
@@ -116,10 +121,49 @@ const Channel = () => {
       }, 500);
     }
   }, [chatData]);
+
+  const onDrop = useCallback(
+    (e) => {
+      e.preventDefault();
+      console.log(e);
+      const formData = new FormData();
+      if (e.dataTransfer.items) {
+        for (let i = 0; i < e.dataTransfer.items.length; i++) {
+          // If dropped items aren't files, reject them
+          if (e.dataTransfer.items[i].kind === 'file') {
+            const file = e.dataTransfer.items[i].getAsFile();
+            console.log('... file[' + i + '].name = ' + file.name);
+            formData.append('image', file);
+          }
+        }
+      } else {
+        // Use DataTransfer interface to access the file(s)
+        for (let i = 0; i < e.dataTransfer.files.length; i++) {
+          console.log('... file[' + i + '].name = ' + e.dataTransfer.files[i].name);
+          formData.append('image', e.dataTransfer.files[i]);
+        }
+      }
+      axios.post(`/api/workspaces/${workspace}/channels/${channel}/images`, formData).then(() => {
+        setDragOver(false);
+      });
+    },
+    [workspace, channel],
+  );
+
+  const onDragOver = useCallback((e) => {
+    e.preventDefault();
+    setDragOver(true);
+  }, []);
+
   const chatSections = makeSection(chatData ? chatData.flat().reverse() : []);
+
+  if (!myData) {
+    return null;
+  }
+
   return (
     // Workspace 태그 안 div 태그는 chilren 이 들어있게 된다
-    <Container>
+    <Container onDrop={onDrop} onDragOver={onDragOver}>
       <Header>
         <span>#{channel}</span>
         <div className="header-right">
@@ -137,6 +181,13 @@ const Channel = () => {
       </Header>
       <ChatList chatSections={chatSections} ref={scrollbarRef} setSize={setSize} isReachingEnd={isReachingEnd} />
       <ChatBox chat={chat} onChangeChat={onChangeChat} onSubmitForm={onSubmitForm} />
+      <InviteChannelModal
+        show={showInviteChannelModal}
+        onCloseModal={onCloseModal}
+        setShowInviteChannelModal={setShowInviteChannelModal}
+      />
+
+      {dragOver && <DragOver>업로드!</DragOver>}
     </Container>
   );
 };

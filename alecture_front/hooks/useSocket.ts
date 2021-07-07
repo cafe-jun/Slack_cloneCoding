@@ -15,9 +15,11 @@ const useSocket = (workspace?: string): [SocketIOClient.Socket | undefined, () =
       delete sockets[workspace];
     }
   }, [workspace]);
+
   if (!workspace) {
     return [undefined, disconnect];
   }
+
   if (!sockets[workspace]) {
     sockets[workspace] = io.connect(`${backUrl}/ws-${workspace}`, {
       transports: ['websocket'],
